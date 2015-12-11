@@ -5,6 +5,9 @@ module DLinkedList
     # Clase Referencia
 	class Referencia
 	
+		# Para manipulación de fechas
+		require "date"		
+		
 		# Incluye Comparable
 		include Comparable
 		
@@ -12,25 +15,44 @@ module DLinkedList
 		
 		def initialize(autores, titulo, fecha_publicacion)
 			@autores, @titulo, @fecha_publicacion = autores, titulo, fecha_publicacion
+			raise ArgumentError, "Debe haber al menos un autor" unless autores.length > 0
 		end
 		
 		def to_s
-			# Formato Autores, (Año de publicación). Título.
+			# Formato Apellidos_Autor, Nombre_Autor [& Apellidos_Autor, Nombre_Autor...] (Fecha de publicación). Título.
 			s = ''
-			@autores.each() { |a| s << a << ', '}
-			s << "(#{@fecha_publicacion}). #{@titulo}."
+			s << autores_to_s
+			s << "(#{@fecha_publicacion.strftime('%-d/%-m/%Y')}). #{@titulo}."
 			return s
+		end		
+		
+		# Comparación de referencias según los criterios de la APA
+		def <=>(c_ref)			
+			ref_ord = @autores[0][:apellidos] <=> c_ref.autores[0][:apellidos]
+			if ref_ord == 0 # Primer autor con el mismo apellido				
+				ref_ord = @autores[0][:nombre] <=> c_ref.autores[0][:nombre]
+				if ref_ord == 0 # Mismo primer autor
+					ref_ord = autores_to_s <=> c_ref.autores_to_s
+					if ref_ord == 0 # Mismos autores
+						ref_ord = @fecha_publicacion.year <=> c_ref.fecha_publicacion.year
+						if ref_ord == 0 # Mismos autores y año de publicación
+							ref_ord = @titulo <=> c_ref.titulo
+						end
+					end
+				end				
+			end
+			
+			return ref_ord
 		end
 		
-		# La comparación es por orden alfabético de autores y por orden alfabético de títulos si hay igualdad en los autores
-		def <=>(c_ref)
-			autores_ord = autores.join(", ") <=> c_ref.autores.join(", ")
-			if autores_ord == 0
-				return titulo <=> c_ref.titulo
-			else
-				return autores_ord
-			end
+		# Devuelve la lista de autores como cadena
+		def autores_to_s
+			s = ''
+			@autores.each() { |a| s << a[:apellidos].capitalize << ', ' << a[:nombre][0].capitalize << ". & "}
+			return s.chomp("& ")
 		end
+		
+		protected :autores_to_s
 		
 	end
 	
@@ -42,8 +64,8 @@ module DLinkedList
 		def initialize(autores, titulo, fecha_publicacion, edicion, lugar_publicacion, editorial)
 			super(autores, titulo, fecha_publicacion)
 			@edicion, @lugar_publicacion, @editorial = edicion, lugar_publicacion, editorial
-		end
-		
+		end		
+
 		def to_s
 			# Formato Autores, (Año de publicación). Título. (edicion) Lugar de publicación: Editorial.
 			return super << " (#{@edicion}ª edición) #{@lugar_publicacion}: #{@editorial}."
@@ -59,8 +81,8 @@ module DLinkedList
 		def initialize(autores, titulo, fecha_publicacion, titulo_publicacion, paginas)
 			super(autores, titulo, fecha_publicacion)
 			@titulo_publicacion, @paginas = titulo_publicacion, paginas
-		end
-		
+		end		
+
 		def to_s
 			# Formato Autores, (Año de publicación). Título. Título publicación, páginas.
 			return super << " #{@titulo_publicacion}, p. #{@paginas}."
@@ -179,6 +201,12 @@ module DLinkedList
 				nodo = nodo.next_node
 			end
 			
+		end
+		
+		# Devuelve la lista de referencias ordenadas en líneas distintas como cadena
+		def to_s
+			s_arr = self.sort()
+			return s_arr.join("\n")
 		end
 		
 		private :push_empty
