@@ -67,7 +67,7 @@ module DLinkedList
 		end		
 
 		def to_s
-			# Formato Autores, (Año de publicación). Título. (edicion) Lugar de publicación: Editorial.
+			# Formato Apellidos_Autor, Nombre_Autor [& Apellidos_Autor, Nombre_Autor...] (Fecha de publicación). Título. (edicion) Lugar de publicación: Editorial.
 			return super << " (#{@edicion}ª edición) #{@lugar_publicacion}: #{@editorial}."
 		end
 	
@@ -84,7 +84,7 @@ module DLinkedList
 		end		
 
 		def to_s
-			# Formato Autores, (Año de publicación). Título. Título publicación, páginas.
+			# Apellidos_Autor, Nombre_Autor [& Apellidos_Autor, Nombre_Autor...] (Fecha de publicación). Título. Título publicación, páginas.
 			return super << " #{@titulo_publicacion}, p. #{@paginas}."
 		end
 	
@@ -101,8 +101,8 @@ module DLinkedList
 		end
 		
 		def to_s
-			# Formato Autores, (Año de publicación). Título. Fecha de recuperación, URL.
-			return super << " Recuperado el #{@fecha_recuperacion}, de #{@dURL}."
+			# Apellidos_Autor, Nombre_Autor [& Apellidos_Autor, Nombre_Autor...] (Fecha de publicación). Título. Fecha de recuperación, URL.
+			return super << " Recuperado el #{@fecha_recuperacion.strftime('%-d/%-m/%Y')}, de #{@dURL}."
 		end
 	
 	end
