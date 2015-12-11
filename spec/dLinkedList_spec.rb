@@ -2,15 +2,16 @@
 
 require "spec_helper"
 require "dLinkedList"
+require "date" # Para manipulación de fechas
 
 describe DLinkedList do
     
-    before :each do
-        
-        @r1 = DLinkedList::Referencia.new(['Dave Thomas', 'Andy Hunt', 'Chad Fowler'], 'Programming Ruby 1.9 & 2.0: The Pragmatic Programmers Guide', '7 de Julio, 2013')
-        @l1 = DLinkedList::Libro.new(['David Flanagan', 'Yukihiro Matsumoto'], 'The Ruby Programming Language', '4 Febrero, 2008', 1, 'Dallas, Texas', 'O’Reilly Media')
-		@a1 = DLinkedList::Articulo.new(['M. Vargas'], 'El elefante y la cultura', 'Septiembre, 1982', 'Revista Vuelta', '13-16')
-		@d1 = DLinkedList::EDocumento.new(['M. Magallón'], 'Filosofía política de la educación', '1993', '5 de Febrero, 2009', 'http://bidi.unam.mx/libroe_2007/0638679/Index.html')
+    before :each do        
+
+        @r1 = DLinkedList::Referencia.new([{nombre: 'Dave', apellidos: 'Thomas'}, {nombre: 'Andy', apellidos: 'Hunt'}, {nombre: 'Chad', apellidos: 'Fowler'}], 'Programming Ruby 1.9 & 2.0: The Pragmatic Programmers Guide', Date.new(2013, 7, 7))
+        @l1 = DLinkedList::Libro.new([{nombre: 'David', apellidos: 'Flanagan'}, {nombre: 'Yukihiro', apellidos: 'Matsumoto'}], 'The Ruby Programming Language', Date.new(2008, 2, 4), 1, 'Dallas, Texas', 'O’Reilly Media')
+		@a1 = DLinkedList::Articulo.new([{nombre: 'Mario', apellidos: 'Vargas Llosa'}], 'El elefante y la cultura', Date.new(1982, 9, 1), 'Revista Vuelta', '13-16')
+		@d1 = DLinkedList::EDocumento.new([{nombre: 'Mario', apellidos: 'Magallón'}], 'Filosofía política de la educación', Date.new(1993, 5, 10), Date.new(2009, 2, 5), 'http://bidi.unam.mx/libroe_2007/0638679/Index.html')
 		
 		@nodo = DLinkedList::Node.new("Un valor")
 		@list = DLinkedList::List.new()
@@ -23,23 +24,31 @@ describe DLinkedList do
 			expect(@r1).to be_instance_of(DLinkedList::Referencia)
 		end
 		it "# El objeto Referencia básica debe tener un atributo multivalor para el/los autor/es" do
-			expect(@r1).to have_attributes(:autores => ['Dave Thomas', 'Andy Hunt', 'Chad Fowler'])
+			expect(@r1).to have_attributes(:autores => [{nombre: 'Dave', apellidos: 'Thomas'}, {nombre: 'Andy', apellidos: 'Hunt'}, {nombre: 'Chad', apellidos: 'Fowler'}])
 		end
 		it "# El objeto Referencia básica debe tener un atributo para el título de la referencia" do
 			expect(@r1).to have_attributes(:titulo => 'Programming Ruby 1.9 & 2.0: The Pragmatic Programmers Guide')
 		end
 		it "# El objeto Referencia básica debe tener un atributo para la fecha de publicación" do
-			expect(@r1).to have_attributes(:fecha_publicacion => '7 de Julio, 2013')
+			expect(@r1).to have_attributes(:fecha_publicacion => Date.new(2013, 7, 7))
 		end
-		it "# El objeto Referencia básica debe tener un método para obtener la referencia formateada" do
-			expect(@r1).to respond_to(:to_s)
+		
+		describe "# El objeto Referencia básica debe ser formateado según el formato APA" do
+			
+			it "# El objeto Referencia básica debe tener un método para obtener la referencia formateada" do
+				expect(@r1).to respond_to(:to_s)
+			end
+			
+			# TODO: Tests de comprobación del formato de citas
+			
 		end
+		
 		
 		describe "# El objeto referencia básica es comparable" do
 			
 			before :each do
-				@r2 = DLinkedList::Referencia.new(['M. Magallón'], 'Filosofía política de la educación', '1993')
-				@r3 = DLinkedList::Referencia.new(['M. Magallón'], 'La democracia en América Latina', '1991')
+				@r2 = DLinkedList::Referencia.new([{nombre: 'Mario', apellidos: 'Magallón'}], 'Filosofía política de la educación', Date.new(1993, 5, 10))
+				@r3 = DLinkedList::Referencia.new([{nombre: 'Mario', apellidos: 'Magallón'}], 'La democracia en América Latina', Date.new(1991, 7, 12))
 			end
 			
 			it "# Tipado" do
@@ -47,23 +56,23 @@ describe DLinkedList do
   			end
 			
 			it "# Operador <" do
-				expect(@r1).to be < @r2
-				expect(@r2).to be < @r3
+				expect(@r3).to be < @r2
+				expect(@r2).to be < @r1
 			end
 			it "# Operador <=" do
-				expect(@r1).to be <= @r2
-				expect(@r2).to be <= @r3
+				expect(@r3).to be <= @r2
+				expect(@r2).to be <= @r1
 			end
 			it "# Igualdad" do
 				expect(@r1).to eql(@r1)
 			end
 			it "# Operador >" do
-				expect(@r2).to be > @r1
-				expect(@r3).to be > @r2
+				expect(@r1).to be > @r2
+				expect(@r2).to be > @r3
 			end
 			it "# Operador >=" do
-				expect(@r2).to be >= @r1
-				expect(@r3).to be >= @r2
+				expect(@r1).to be >= @r2
+				expect(@r2).to be >= @r3
 			end
 		end
 		
@@ -77,13 +86,13 @@ describe DLinkedList do
 			expect(@l1).to be_kind_of(DLinkedList::Referencia)
 		end
 		it "# El objeto Libro debe tener un atributo multivalor para el/los autor/es" do
-			expect(@l1).to have_attributes(:autores => ['David Flanagan', 'Yukihiro Matsumoto'])
+			expect(@l1).to have_attributes(:autores => [{nombre: 'David', apellidos: 'Flanagan'}, {nombre: 'Yukihiro', apellidos: 'Matsumoto'}])
 		end
 		it "# El objeto Libro debe tener un atributo para el título de la referencia" do
 			expect(@l1).to have_attributes(:titulo => 'The Ruby Programming Language')
 		end
 		it "# El objeto Libro debe tener un atributo para la fecha de publicación" do
-			expect(@l1).to have_attributes(:fecha_publicacion => '4 Febrero, 2008')
+			expect(@l1).to have_attributes(:fecha_publicacion => Date.new(2008, 2, 4))
 		end
 		it "# El objeto Libro debe tener un atributo para la edición" do
 			expect(@l1).to have_attributes(:edicion => 1)
@@ -94,9 +103,17 @@ describe DLinkedList do
 		it "# El objeto Libro debe tener un atributo para la editorial" do
 			expect(@l1).to have_attributes(:editorial => 'O’Reilly Media')
 		end
-		it "# El objeto Libro debe tener un método para obtener la referencia formateada" do
-			expect(@l1).to respond_to(:to_s)
-		end		
+		
+		describe "# El objeto Libro debe ser formateado según el formato APA" do
+			
+			it "# El objeto Libro debe tener un método para obtener la referencia formateada" do
+				expect(@l1).to respond_to(:to_s)
+			end
+			
+			# TODO: Tests de comprobación del formato de citas
+			
+		end
+			
 	end
 	
 	describe "Articulo" do
@@ -107,13 +124,13 @@ describe DLinkedList do
 			expect(@a1).to be_kind_of(DLinkedList::Referencia)
 		end
 		it "# El objeto Articulo debe tener un atributo multivalor para el/los autor/es" do
-			expect(@a1).to have_attributes(:autores => ['M. Vargas'])
+			expect(@a1).to have_attributes(:autores => [{nombre: 'Mario', apellidos: 'Vargas Llosa'}])
 		end
 		it "# El objeto Articulo debe tener un atributo para el título de la referencia" do
 			expect(@a1).to have_attributes(:titulo => 'El elefante y la cultura')
 		end
 		it "# El objeto Articulo debe tener un atributo para la fecha de publicación" do
-			expect(@a1).to have_attributes(:fecha_publicacion => 'Septiembre, 1982')
+			expect(@a1).to have_attributes(:fecha_publicacion => Date.new(1982, 9, 1))
 		end		
 		it "# El objeto Articulo debe tener un atributo para el título de la publicación" do
 			expect(@a1).to have_attributes(:titulo_publicacion => 'Revista Vuelta')
@@ -121,9 +138,17 @@ describe DLinkedList do
 		it "# El objeto Articulo debe tener un atributo para las páginas" do
 			expect(@a1).to have_attributes(:paginas => '13-16')
 		end
-		it "# El objeto Articulo debe tener un método para obtener la referencia formateada" do
-			expect(@a1).to respond_to(:to_s)
-		end		
+		
+		describe "# El objeto Artículo debe ser formateado según el formato APA" do
+			
+			it "# El objeto Artículo debe tener un método para obtener la referencia formateada" do
+				expect(@a1).to respond_to(:to_s)
+			end
+			
+			# TODO: Tests de comprobación del formato de citas
+			
+		end
+			
 	end
 	
 	describe "EDocumento" do
@@ -134,23 +159,31 @@ describe DLinkedList do
 			expect(@d1).to be_kind_of(DLinkedList::Referencia)
 		end
 		it "# El objeto EDocumento debe tener un atributo multivalor para el/los autor/es" do
-			expect(@d1).to have_attributes(:autores => ['M. Magallón'])
+			expect(@d1).to have_attributes(:autores => [{nombre: 'Mario', apellidos: 'Magallón'}])
 		end
 		it "# El objeto EDocumento debe tener un atributo para el título de la referencia" do
 			expect(@d1).to have_attributes(:titulo => 'Filosofía política de la educación')
 		end
 		it "# El objeto EDocumento debe tener un atributo para la fecha de publicación" do
-			expect(@d1).to have_attributes(:fecha_publicacion => '1993')
+			expect(@d1).to have_attributes(:fecha_publicacion => Date.new(1993, 5, 10))
 		end		
 		it "# El objeto EDocumento debe tener un atributo para la fecha de recuperación" do
-			expect(@d1).to have_attributes(:fecha_recuperacion => '5 de Febrero, 2009')
+			expect(@d1).to have_attributes(:fecha_recuperacion => Date.new(2009, 2, 5))
 		end
 		it "# El objeto EDocumento debe tener un atributo para la URL (Uniform Resource Locator)" do
 			expect(@d1).to have_attributes(:dURL => 'http://bidi.unam.mx/libroe_2007/0638679/Index.html')
 		end
-		it "# El objeto EDocumento debe tener un método para obtener la referencia formateada" do
-			expect(@d1).to respond_to(:to_s)
-		end		
+		
+		describe "# El objeto EDocumento debe ser formateado según el formato APA" do
+			
+			it "# El objeto EDocumento debe tener un método para obtener la referencia formateada" do
+				expect(@d1).to respond_to(:to_s)
+			end
+			
+			# TODO: Tests de comprobación del formato de citas
+			
+		end
+			
 	end
 	
 	describe "Node" do
@@ -225,7 +258,7 @@ describe DLinkedList do
   			end
   			
   			it "# Método min" do
-  				expect(@le.min).to equal(@r1)
+  				expect(@le.min).to equal(@l1)
   			end
   			
   			it "# Método max" do
@@ -233,9 +266,30 @@ describe DLinkedList do
   			end
   			
   			it "# Método sort" do
-  				expect(@le.sort).to eql([@r1, @l1, @d1, @a1])
+  				expect(@le.sort).to eql([@l1, @d1, @r1, @a1])
   			end
 
+  		end
+  		
+  		describe "# La lista debe estar ordenada según los criterios APA" do
+  		
+  			before :each do
+  				@ls = DLinkedList::List.new()
+  				
+  				@r2 = DLinkedList::Referencia.new([{nombre: 'Iván', apellidos: 'Sánchez'}], 'Ejemplos de ordenación', Date.new(1999, 4, 7))
+  				@r3 = DLinkedList::Referencia.new([{nombre: 'Alejandro', apellidos: 'López'}], 'Algoritmos de ordenación', Date.new(2011, 4, 7))
+  				@r4 = DLinkedList::Referencia.new([{nombre: 'Alejandro', apellidos: 'López'}, {nombre: 'Pedro', apellidos: 'Pérez'}, {nombre: 'Juan Carlos', apellidos: 'Rodríguez'}], 'Ordenación en Ruby', Date.new(2010, 2, 19))
+  				@r5 = DLinkedList::Referencia.new([{nombre: 'Alejandro', apellidos: 'López'}, {nombre: 'Pedro', apellidos: 'Pérez'}, {nombre: 'Juan Carlos', apellidos: 'Rodríguez'}], 'Ejemplos de ordenación, Parte 1', Date.new(2012, 3, 30))  				
+  				@r6 = DLinkedList::Referencia.new([{nombre: 'Alejandro', apellidos: 'López'}, {nombre: 'Pedro', apellidos: 'Pérez'}, {nombre: 'Juan Carlos', apellidos: 'Rodríguez'}], 'Ejemplos de ordenación, Parte 2', Date.new(2012, 3, 30))
+
+  				
+  				@ls.push_multi(@r2, @r3, @r4, @r5, @r6)
+  			end  			
+  			
+  			it "# Ordenación según APA es correcta" do
+  				expect(@ls.to_s).to eql([@r3, @r4, @r5, @r6, @r2].join("\n"))
+  			end
+  		
   		end
   		
   	end
