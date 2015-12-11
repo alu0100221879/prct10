@@ -216,10 +216,13 @@ describe DLinkedList do
   		end
   		
   		it "# Se puede extraer el primer elemento" do
-  			@list.push(@r1)
+  			@list.push_multi(@r1, @l1, @a1, @d1)
   			ref = @list.pop()
   			expect(ref).to equal(@r1)
-  			expect(@list).to be_empty
+  			expect(@list.head.value).to equal(@l1)
+  			expect(@list.head.next_node.value).to equal(@a1)
+  			expect(@list.head.prev_node).to be_nil
+  			expect(@list.size).to eql(3)
   		end
   		
   		it "# Prueba bibliografía" do
