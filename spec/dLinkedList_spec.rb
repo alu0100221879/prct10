@@ -37,9 +37,11 @@ describe DLinkedList do
 			
 			it "# El objeto Referencia básica debe tener un método para obtener la referencia formateada" do
 				expect(@r1).to respond_to(:to_s)
+			end			
+
+			it "# Comprobación del formato de cita" do
+				expect(@r1.to_s).to eql('Thomas, D. & Hunt, A. & Fowler, C. (7/7/2013). Programming Ruby 1.9 & 2.0: The Pragmatic Programmers Guide.')
 			end
-			
-			# TODO: Tests de comprobación del formato de citas
 			
 		end
 		
@@ -110,7 +112,9 @@ describe DLinkedList do
 				expect(@l1).to respond_to(:to_s)
 			end
 			
-			# TODO: Tests de comprobación del formato de citas
+			it "# Comprobación del formato de cita" do
+				expect(@l1.to_s).to eql('Flanagan, D. & Matsumoto, Y. (4/2/2008). The Ruby Programming Language. (1ª edición) Dallas, Texas: O’Reilly Media.')
+			end
 			
 		end
 			
@@ -145,7 +149,9 @@ describe DLinkedList do
 				expect(@a1).to respond_to(:to_s)
 			end
 			
-			# TODO: Tests de comprobación del formato de citas
+			it "# Comprobación del formato de cita" do
+				expect(@a1.to_s).to eql('Vargas llosa, M. (1/9/1982). El elefante y la cultura. Revista Vuelta, p. 13-16.')
+			end
 			
 		end
 			
@@ -180,7 +186,9 @@ describe DLinkedList do
 				expect(@d1).to respond_to(:to_s)
 			end
 			
-			# TODO: Tests de comprobación del formato de citas
+			it "# Comprobación del formato de cita" do
+				expect(@d1.to_s).to eql('Magallón, M. (10/5/1993). Filosofía política de la educación. Recuperado el 5/2/2009, de http://bidi.unam.mx/libroe_2007/0638679/Index.html.')
+			end
 			
 		end
 			
